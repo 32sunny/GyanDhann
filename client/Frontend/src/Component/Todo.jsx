@@ -10,14 +10,13 @@ const Todo = () => {
   });
   const [editingId, setEditingId] = useState(null);
 
-  // Fetch todos from the backend
   useEffect(() => {
     fetchTodos();
   }, []);
 
   const fetchTodos = async () => {
     try {
-      const response = await fetch('http://localhost:8000/todo/read');
+      const response = await fetch('https://gyandhann-2.onrender.com/todo/read');
       const data = await response.json();
       setTodos(data);
     } catch (err) {
@@ -25,7 +24,6 @@ const Todo = () => {
     }
   };
 
-  // Create a new Todo
   const handleCreate = async () => {
     if (!updatedData.title) {
       setError('Title is required');
@@ -33,7 +31,7 @@ const Todo = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/todo/create', {
+      const response = await fetch('https://gyandhann-3.onrender.com/todo/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,20 +42,19 @@ const Todo = () => {
       const newTodo = await response.json();
       setTodos([...todos, newTodo]);
       setUpdatedData({ title: '', isComplete: false, status: 'Low' });
+    
     } catch (err) {
       setError('Failed to create todo');
     }
   };
 
-  // Handle form changes
   const handleChange = (e) => {
     setUpdatedData({ ...updatedData, [e.target.name]: e.target.value });
   };
 
-  // Delete a Todo
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:8000/todo/delete/${id}`, {
+      await fetch(`https://gyandhann-2.onrender.com/todo/delete/${id}`, {
         method: 'DELETE',
       });
       setTodos(todos.filter((todo) => todo._id !== id));
@@ -66,7 +63,6 @@ const Todo = () => {
     }
   };
 
-  // Update a Todo
   const handleUpdate = async () => {
     if (!updatedData.title) {
       setError('Title is required');
@@ -74,7 +70,7 @@ const Todo = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/todo/update/${editingId}`, {
+      const response = await fetch(`https://gyandhann-2.onrender.com/todo/update/${editingId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -82,16 +78,21 @@ const Todo = () => {
         body: JSON.stringify(updatedData),
       });
 
+
       const updatedTodo = await response.json();
-      setTodos(todos.map((todo) => (todo._id === editingId ? updatedTodo : todo)));
+      
+   
+      setTodos(todos.map((todo) => (todo._id === editingId ? { ...todo, ...updatedTodo } : todo)));
+
+     
       setUpdatedData({ title: '', isComplete: false, status: 'Low' });
-      setEditingId(null); // Clear editing mode
+      setEditingId(null);
+      window.location.reload();
     } catch (err) {
       setError('Failed to update todo');
     }
   };
 
-  // Start editing a Todo
   const handleEdit = (todo) => {
     setEditingId(todo._id);
     setUpdatedData({

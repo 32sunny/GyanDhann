@@ -1,13 +1,15 @@
 
 import './App.css'
-import Todo from './Component/todo'
+import TodoList from './Component/Todo'
+
+
 
 function App() {
  
 
   return (
     <>
-    <Todo/>
+    <TodoList/>
    
     </>
   )
