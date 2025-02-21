@@ -10,6 +10,7 @@ const Todo = () => {
   });
   const [editingId, setEditingId] = useState(null);
 
+  // Fetch todos from the backend
   useEffect(() => {
     fetchTodos();
   }, []);
@@ -24,6 +25,7 @@ const Todo = () => {
     }
   };
 
+  // Create a new Todo
   const handleCreate = async () => {
     if (!updatedData.title) {
       setError('Title is required');
@@ -31,7 +33,7 @@ const Todo = () => {
     }
 
     try {
-      const response = await fetch('https://gyandhann-3.onrender.com/todo/create', {
+      const response = await fetch('https://gyandhann-2.onrender.com/todo/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,16 +44,17 @@ const Todo = () => {
       const newTodo = await response.json();
       setTodos([...todos, newTodo]);
       setUpdatedData({ title: '', isComplete: false, status: 'Low' });
-    
     } catch (err) {
       setError('Failed to create todo');
     }
   };
 
+  // Handle form changes
   const handleChange = (e) => {
     setUpdatedData({ ...updatedData, [e.target.name]: e.target.value });
   };
 
+  // Delete a Todo
   const handleDelete = async (id) => {
     try {
       await fetch(`https://gyandhann-2.onrender.com/todo/delete/${id}`, {
@@ -63,6 +66,7 @@ const Todo = () => {
     }
   };
 
+  // Update a Todo
   const handleUpdate = async () => {
     if (!updatedData.title) {
       setError('Title is required');
@@ -70,6 +74,7 @@ const Todo = () => {
     }
 
     try {
+      console.log('Editing Todo with ID:', editingId); // Debugging line
       const response = await fetch(`https://gyandhann-2.onrender.com/todo/update/${editingId}`, {
         method: 'PATCH',
         headers: {
@@ -80,20 +85,20 @@ const Todo = () => {
 
 
       const updatedTodo = await response.json();
-      
-   
-      setTodos(todos.map((todo) => (todo._id === editingId ? { ...todo, ...updatedTodo } : todo)));
-
-     
+      console.log(updatedTodo); // Check the updated todo object
+      setTodos(todos.map((todo) => (todo._id === editingId ? updatedTodo : todo)));
       setUpdatedData({ title: '', isComplete: false, status: 'Low' });
-      setEditingId(null);
-      window.location.reload();
+      setEditingId(null); // Clear editing mode
+     window.location.reload();
+
     } catch (err) {
       setError('Failed to update todo');
     }
   };
 
+  // Start editing a Todo
   const handleEdit = (todo) => {
+    console.log('Editing Todo:', todo);  // Debugging line
     setEditingId(todo._id);
     setUpdatedData({
       title: todo.title,
@@ -134,7 +139,7 @@ const Todo = () => {
             </div>
             <div>Status: {todo.status}</div>
             <div>{todo.isComplete ? 'Completed' : 'Incomplete'}</div>
-            <button onClick={() => handleEdit(todo)}>Update</button>
+            <button onClick={() => handleEdit(todo)}>Edit</button>
             <button onClick={() => handleDelete(todo._id)} style={{ color: 'red' }}>
               Delete
             </button>
