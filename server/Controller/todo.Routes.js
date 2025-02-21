@@ -38,11 +38,15 @@ todorouter.post('/create', async (req, res) => {
   
  
   todorouter.patch('/update/:id',async (req,res)=>{
-   const id = req.params.id
-    const payload = req.body  
- 
-      const upadteData =  await todo.findByIdAndUpdate({_id : id  ,payload },{new : true})
-   res.send(upadteData)
+    
+      try {
+        const { id } = req.params;
+        const updatedTask = await todo.findByIdAndUpdate(id, req.body, { new: true });
+        res.status(200).json({ message: "Task updated successfully", updatedTask });
+      } catch (err) {
+        res.status(400).json({ message: "Something went wrong" });
+      }
+    
  })
  
  
